@@ -59,7 +59,11 @@ SELECT `school_db_student`.`id`,
 # Print out each student's full name and gpa to the terminal
 def problem_one(request):
 
-
+    
+    students = Student.objects.filter(gpa__gt=3.0).order_by('-gpa')
+    
+    for student in students:
+        print(f'Full Name: {student.first_name} {student.last_name} GPA: {student.gpa}')
 
     return complete(request)
 
@@ -99,9 +103,13 @@ SELECT `school_db_student`.`id`,
 # Order by hire date ascending
 # Print out the instructor's full name and hire date to the terminal
 def problem_two(request):
-
-
-
+    
+    instructors = Instructor.objects.filter(hire_date__year__lt=2010).order_by('hire_date')
+    
+    for instructor in instructors:
+        print(f'Full Name: {instructor.first_name} {instructor.last_name} Hire date: {instructor.hire_date}')
+  
+  
     return complete(request)
 
 
@@ -116,7 +124,6 @@ https://docs.djangoproject.com/en/4.0/ref/models/querysets/#lt
 """
 Full Name: Colin Robinson
 Hire Date: 2009-04-10
-
 Full Name: Guillermo de la Cruz
 Hire Date: 2009-11-18
 """
@@ -139,9 +146,10 @@ SELECT `school_db_instructor`.`id`,
 # Print the instructors name and courses that he belongs to in the terminal 
 # (Do not hard code his name in the print)
 def problem_three(request):
-
-
-
+    courses = Course.objects.filter(pk=2).get()
+    for course in courses:
+        print(f'Instructor Name: {course.instructor.first_name} {course.instructor.last_name}')
+    
     return complete(request)
 
 
@@ -162,7 +170,6 @@ Courses:
 # Expected Resulting SQL Query (Found in "SQL" section of the debug toolbar in browser):
 """
 # First Query:
-
 SELECT `school_db_instructor`.`id`,
        `school_db_instructor`.`first_name`,
        `school_db_instructor`.`last_name`,
@@ -170,9 +177,7 @@ SELECT `school_db_instructor`.`id`,
   FROM `school_db_instructor`
  WHERE `school_db_instructor`.`id` = 2
  LIMIT 21
-
 # Second Query:
-
  SELECT `school_db_course`.`id`,
        `school_db_course`.`name`,
        `school_db_course`.`instructor_id`,
@@ -187,6 +192,16 @@ SELECT `school_db_instructor`.`id`,
 
 # Get the count of students, courses, and instructors and print them in the terminal
 def problem_four(request):
+    students_count = Student.objects.all().count()
+    print(f'Students Count: {students_count}')
+    courses_count = Course.objects.all().count()
+    print(f'Courses count: {courses_count}')
+    instructors_count = Instructor.objects.all().count()
+    print(f'Instructors count: {instructors_count}')
+
+
+
+
 
 
 
@@ -208,17 +223,12 @@ Instructors Count: 6
 # Expected Resulting SQL Query (Found in "SQL" section of the debug toolbar in browser):
 """
 # First Query:
-
 SELECT COUNT(*) AS `__count`
   FROM `school_db_student`
-
 # Second Query:
-
 SELECT COUNT(*) AS `__count`
   FROM `school_db_course`
-
 # Third Query:
-
 SELECT COUNT(*) AS `__count`
   FROM `school_db_instructor`
 """
@@ -233,6 +243,11 @@ SELECT COUNT(*) AS `__count`
 # Print the new student's id, full name, year, and gpa to the terminal
 # NOTE every time you execute this function a duplicate student will be created with a different primary key number
 def problem_five(request):
+    student = Student.objects.create(first_name ='Joe', last_name ='Brown', year = 9, gpa = 3.0, id = '11')
+    print(f'Id: {student.id}')
+    print(f'Full Name: {student.first_name} {student.last_name}')
+    print(f'Year: {student.year}')
+    print(f'GPA: {student.gpa}')
 
 
 
@@ -269,7 +284,10 @@ VALUES ('Kyle', 'Harwood', 2022, 3.0)
 def problem_six(request):
     
     # Make sure to set this equal to the primary key of the row you just created!
+    Student.objects.filter(pk=student_id).update(gpa=3.5)
+    student = Student.objects.get(pk=student_id).update(year=2019)
     student_id = 11
+    
 
 
 
@@ -291,14 +309,11 @@ GPA: 3.5
 # Expected Resulting SQL Query (Found in "SQL" section of the debug toolbar in browser):
 """
 # Query One:
-
 UPDATE `school_db_student`
 # NOTE: The gpa value will be what you chose
    SET `gpa` = 3.5
  WHERE `school_db_student`.`id` = 11
-
 # Query Two:
-
 SELECT `school_db_student`.`id`,
     `school_db_student`.`first_name`,
     `school_db_student`.`last_name`,
@@ -342,7 +357,6 @@ Great! It failed and couldnt find the object because we deleted it!
 # Expected Resulting SQL Query (Found in "SQL" section of the debug toolbar in browser):
 """
 # Query One:
-
 SELECT `school_db_student`.`id`,
        `school_db_student`.`first_name`,
        `school_db_student`.`last_name`,
@@ -350,15 +364,11 @@ SELECT `school_db_student`.`id`,
        `school_db_student`.`gpa`
   FROM `school_db_student`
  WHERE `school_db_student`.`id` = 15
-
  # Query Two:
-
  DELETE
   FROM `school_db_studentcourse`
  WHERE `school_db_studentcourse`.`student_id` IN (15)
-
  # Query Three: - NOTE this query is included in the starter code. See the query in the try catch
-
 SELECT `school_db_student`.`id`,
        `school_db_student`.`first_name`,
        `school_db_student`.`last_name`,
