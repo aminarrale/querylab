@@ -146,9 +146,10 @@ SELECT `school_db_instructor`.`id`,
 # Print the instructors name and courses that he belongs to in the terminal 
 # (Do not hard code his name in the print)
 def problem_three(request):
-    courses = Course.objects.filter(pk=2).get()
+    courses = Course.objects.filter(instructor_id=2)
     for course in courses:
         print(f'Instructor Name: {course.instructor.first_name} {course.instructor.last_name}')
+        print(f'Courses: {course.name}')
     
     return complete(request)
 
@@ -338,7 +339,7 @@ def problem_seven(request):
 
     # Make sure to set this equal to the primary key of the row you just created!
     student_id = 11
-    student.objects.filter(pk=student_id).delete()
+    Student.objects.filter(pk=student_id).delete()
 
     
 
